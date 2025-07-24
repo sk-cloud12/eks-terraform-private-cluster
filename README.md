@@ -1,109 +1,140 @@
 # eks-terraform-private-cluster
-# 🛡️ Provisioning a Private EKS Cluster using Terraform
 
-This project provisions a secure Amazon EKS cluster using Terraform. The cluster is deployed entirely within private subnets, and the EKS API endpoint is also private-only. A helper shell script is included to display node details via kubectl.
+## 🛡 Provisioning a Private EKS Cluster using Terraform
+
+This project sets up a secure Amazon EKS cluster using Terraform. The entire cluster, including worker nodes and the EKS API endpoint, is deployed within private subnets — meaning no public internet exposure. A simple shell script is also included to fetch node details using kubectl.
 
 ---
 
 ## 📁 Project Structure
+
+. ├── main.tf ├── get-nodes.sh └── README.md
+
 ---
 
 ## 🎯 Assignment Objectives
 
-- ✅ Provision a private EKS cluster using Terraform
-- ✅ EKS cluster and worker nodes reside in private subnets only
-- ✅ EKS API endpoint is private-only (no public access)
-- ✅ Use at least 2 private subnets in different AZs
-- ✅ Create a bash script (get-nodes.sh) using kubectl to:
-  - Show Node Name
-  - Show Internal IP address
-- ✅ Write full documentation (README.md) with:
-  - Provisioning steps
-  - Authentication instructions
-  - Tools and configurations used
+- ✅ Provision a private EKS cluster using Terraform  
+- ✅ Ensure both the control plane and worker nodes are in private subnets  
+- ✅ EKS API endpoint must be private-only (no public access)  
+- ✅ Use at least 2 private subnets across different Availability Zones  
+- ✅ Include a bash script (get-nodes.sh) that shows:
+  - Node name  
+  - Internal IP address  
+- ✅ Document the entire setup in a README.md, covering:
+  - Provisioning steps  
+  - Authentication setup  
+  - Tools and configurations used  
 
 ---
 
 ## 🌐 AWS Region
-You may change the region in main.tf under the provider block.
+
+You can change the AWS Region in the provider block inside main.tf.
 
 ---
 
 ## 🧰 Tools & Versions Used
 
-| Tool         | Version (Minimum) |
-|--------------|-------------------|
-| Terraform    | 1.6.x             |
-| AWS CLI      | 2.x               |
-| kubectl      | 1.28+             |
-| GitHub Codespaces | Used for development |
+| Tool                | Version (Minimum)   |
+|---------------------|----------------------|
+| Terraform           | 1.6.x                |
+| AWS CLI             | 2.x                  |
+| kubectl             | 1.28+                |
+| GitHub Codespaces   | Used for development |
 
 ---
 
-## 🔐 AWS Authentication (Required for Deployment)
+## 🔐 AWS Authentication
 
-> ⚠️ Terraform must authenticate with AWS to create resources.
-> ✅ AWS credentials are NOT included in this repo for security reasons.
+> ⚠️ Terraform needs access to your AWS account to create resources.  
+> ✅ AWS credentials are not stored in this repo for security reasons.
 
 ### 👤 Required IAM Permissions
 
-To deploy this infrastructure, your IAM user needs:
+The IAM user or role must have permissions like:
 
-- eks:*
-- ec2:*
-- vpc:*
-- iam:*
-- autoscaling:*
+- eks:*  
+- ec2:*  
+- vpc:*  
+- iam:*  
+- autoscaling:*  
 
-For simplicity during testing, you may use AdministratorAccess.
+For testing, you can use AdministratorAccess.
 
-### 🔑 How to Authenticate
+---
 
-#### Option 1: Use Environment Variables (Recommended)
+### 🔑 Authentication – Option 1 (Recommended)
+
+Use environment variables for temporary credentials:
 
 `bash
 export AWS_ACCESS_KEY_ID=your_access_key
 export AWS_SECRET_ACCESS_KEY=your_secret_key
 export AWS_REGION=us-east-1
+
 aws configure
 aws sts get-caller-identity
+
 terraform init
 terraform validate
 terraform plan
 terraform apply
-This creates the VPC, subnets, EKS cluster, and managed node group.
-⏳ Expect 15–20 minutes for full provisioning. 
+
+⏳ Full provisioning may take 15–20 minutes.
 
 
-🧭 Configure kubectl to Access the Cluster
-Once the cluster is created:
+---
+
+🧭 Configure kubectl Access
+
+Once the cluster is up, configure your kubectl:
+
 aws eks update-kubeconfig --region us-east-1 --name erp-private-eks
 kubectl get nodes
 
 
-📜 Node Listing Script – get-nodes.sh
-This script lists all EKS worker nodes along with their internal IP addresses.
+---
+
+📜 get-nodes.sh – Node Listing Script
+
+This shell script lists all EKS worker nodes with their internal IPs.
 
 chmod +x get-nodes.sh
 ./get-nodes.sh
+
+Sample Output:
+
 Fetching list of EKS nodes...
-Node Name              Internal IP
-ip-10-0-1-123          10.0.1.123
-ip-10-0-2-231          10.0.2.231
+
+Node Name               Internal IP
+ip-10-0-1-123           10.0.1.123
+ip-10-0-2-231           10.0.2.231
+
+
+---
 
 ✅ Final Notes
-No public subnet or endpoint is used — the entire setup is private
 
-All Terraform configurations are written from scratch as per assignment
+Everything is deployed in private subnets only
 
-No pre-built Terraform modules or starter templates were used
+No public endpoint is exposed
 
-AWS credentials must be set manually by the user
+All Terraform code is written from scratch
 
-This project is developed and tested in GitHub Codespaces
+No pre-built modules or templates were used
+
+AWS credentials must be exported manually
+
+Developed and tested in GitHub Codespaces
+
+
+
+---
 
 📬 Submission
-All relevant files have been added:
+
+The following files are included and ready for review:
 
 main.tf
 
@@ -111,5 +142,5 @@ get-nodes.sh
 
 README.md
 
-This repository is public as required.
-Feel free to clone or test with your own AWS credentials.
+
+This repository is public.
